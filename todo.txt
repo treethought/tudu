@@ -1,0 +1,9 @@
+Research self-publishing services @Computer +Novel
+(B) Outline chapter 5 @Computer +Novel
+(A) Schedule annual checkup +Health
+x 2021-04-17 (C) Add cover sheets @Office +TPSReports
+x 2021-04-17 Pick up milk @GroceryStore
+x 2021-04-17 (A) Call Mom @Phone +Family
+x 2021-04-17 Download Todo.txt mobile app @Phone
+x 2021-04-17 Plan backyard herb garden @Home
+a new task to do @dev +new-project
