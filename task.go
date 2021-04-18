@@ -1,6 +1,7 @@
 package tudu
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -13,7 +14,10 @@ var (
 	completedColor = lipgloss.Color("#3C3C3C") // a dark gray
 	projectColor   = lipgloss.Color("#04B575") // a green
 	contextColor   = lipgloss.Color("#e28743") // a green
+    defaultColor = lipgloss.Color("#Fcad90")
 )
+
+var alphabet = map[string]int{"A": 1, "B": 2, "C": 3}
 
 type TaskView struct {
 	todo.Task
@@ -29,11 +33,16 @@ func (t TaskView) styledView() string {
 
 	if t.Completed {
 		style = style.Background(completedColor).Strikethrough(true)
-        return style.Render(t.String())
-	} 
-
+		return style.Render(t.String())
+	}
 
 	s := t.String()
+
+	priority := alphabet[t.Priority]
+	priorityColor := lipgloss.Color(fmt.Sprintf("%v", priority))
+    priorityStyle := style.Background(priorityColor)
+
+	s = strings.ReplaceAll(s, t.Priority, priorityStyle.Render(t.Priority))
 
 	for _, p := range t.Projects {
 		pstyle := style.Foreground(projectColor)

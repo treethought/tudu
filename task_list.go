@@ -28,7 +28,7 @@ func loadTasks() tea.Msg {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tasklist.Sort(tt.SORT_PRIORITY_DESC)
+	tasklist.Sort(tt.SORT_PRIORITY_ASC)
 
 	return tasklist
 }
@@ -36,7 +36,7 @@ func loadTasks() tea.Msg {
 func sortTasks(tasks tt.TaskList) tea.Cmd {
 	return func() tea.Msg {
 		tl := &tasks
-		tl.Sort(tt.SORT_PRIORITY_ASC)
+		tl.Sort(tt.SORT_PRIORITY_DESC)
 		return *tl
 	}
 }

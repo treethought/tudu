@@ -21,18 +21,15 @@ func NewList() *List {
 	return &List{
 		items:  []Viewer{},
 		cursor: 0,
-		// itemMap: make(map[int]interface{}),
 	}
 }
 
 func (m *List) Clear() {
 	m.items = nil
-	// m.itemMap = make(map[int]interface{})
 }
 
 func (m *List) AddItem(item Viewer, ref interface{}) {
 	m.items = append(m.items, item)
-	// m.itemMap[len(m.items)-1] = ref
 }
 
 func (m *List) CurrentItem() Viewer {
@@ -46,10 +43,7 @@ func (m *List) Init() tea.Cmd {
 func (m *List) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
-	// Is it a key press?
 	case tea.KeyMsg:
-
-		// Cool, what was the actual key pressed?
 		switch msg.String() {
 
 		case "ctrl+c", "q":

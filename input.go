@@ -5,11 +5,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type SubmitFunc func(value string) tea.Cmd
-
 type Input struct {
-	input      textinput.Model
-	submitFunc SubmitFunc
+	input textinput.Model
 }
 
 func NewInput() Input {
@@ -23,10 +20,6 @@ func (m Input) Focus() {
 
 func (m Input) Value() string {
 	return m.input.Value()
-}
-
-func (m Input) SetSubmitFunc(f SubmitFunc) {
-	m.submitFunc = f
 }
 
 func (m Input) Init() tea.Cmd {
