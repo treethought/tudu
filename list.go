@@ -28,8 +28,13 @@ func (m *List) Clear() {
 	m.items = nil
 }
 
-func (m *List) AddItem(item Viewer, ref interface{}) {
+func (m *List) AddItem(item Viewer) {
 	m.items = append(m.items, item)
+}
+
+func (m *List) Add(item interface{}) {
+    v := viewer{item}
+	m.items = append(m.items, v)
 }
 
 func (m *List) CurrentItem() Viewer {

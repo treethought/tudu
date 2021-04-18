@@ -84,7 +84,7 @@ func (m TaskListView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.tasks = msg
 		for _, t := range m.tasks {
 			tv := NewTaskView(t)
-			m.AddItem(tv, t.Id)
+			m.AddItem(tv)
 		}
 		return m, nil
 
