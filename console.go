@@ -19,7 +19,7 @@ type Console struct {
 func NewConsole() *Console {
 	m := &Console{}
 	m.list = boba.NewList()
-	m.input = boba.NewInput(m.selected)
+	m.input = boba.NewInput(m.submitted)
 	return m
 
 }
@@ -27,7 +27,7 @@ func (m Console) Focus() {
 	m.input.Focus()
 }
 
-func (m Console) selected(val string) tea.Cmd {
+func (m Console) submitted(val string) tea.Cmd {
 	return nil
 }
 

@@ -12,7 +12,7 @@ type TaskListView struct {
 	*boba.List
 	tasks      tt.TaskList
 	taskMap    map[int]int // mapping of list idx to task id
-	filter     tea.Model
+	filter     *boba.Input
 	showFilter bool
 }
 
@@ -80,7 +80,8 @@ func (m *TaskListView) addTask(value string) tea.Cmd {
 	}
 }
 
-func (m TaskListView) filterTasks(query string) tea.Cmd {
+func (m *TaskListView) filterTasks(query string) tea.Cmd {
+    m.showFilter = false
 	return func() tea.Msg {
 		filtered := filterByString(m.tasks, query)
 		return filtered
@@ -103,11 +104,12 @@ func (m *TaskListView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			tv := NewTaskView(t)
 			m.AddItem(tv)
 		}
+        m.filter.Blur()
 		return m, boba.ChangeState("tasks")
 
 	case tea.KeyMsg:
 		if m.showFilter {
-			m.filter, cmd = m.filter.Update(msg)
+			_, cmd = m.filter.Update(msg)
 			return m, cmd
 		}
 
