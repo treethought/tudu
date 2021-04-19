@@ -4,24 +4,32 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/treethought/boba"
 	tt "github.com/treethought/todotxt"
 )
 
 type TaskListView struct {
-	*List
-	tasks   tt.TaskList
-	taskMap map[int]int // mapping of list idx to task id
+	*boba.List
+	tasks      tt.TaskList
+	taskMap    map[int]int // mapping of list idx to task id
+	filter     tea.Model
+	showFilter bool
 }
 
-func NewTaskListView() TaskListView {
-	return TaskListView{
-		List:    NewList(),
+func NewTaskListView() *TaskListView {
+	m := &TaskListView{
+		List:    boba.NewList(),
 		tasks:   tt.NewTaskList(),
 		taskMap: make(map[int]int),
 	}
+
+	filter := boba.NewInput(m.filterTasks)
+	m.filter = filter
+
+	return m
 }
 
-func loadTasks() tea.Msg {
+func (m TaskListView) loadTasks() tea.Msg {
 	tt.IgnoreComments = false
 
 	tasklist, err := tt.LoadFromFilename("todo.txt")
@@ -33,15 +41,15 @@ func loadTasks() tea.Msg {
 	return tasklist
 }
 
-func sortTasks(tasks tt.TaskList) tea.Cmd {
+func (m TaskListView) sortTasks() tea.Cmd {
 	return func() tea.Msg {
-		tl := &tasks
-		tl.Sort(tt.SORT_PRIORITY_DESC)
-		return *tl
+		tl := m.tasks
+		tl.Sort(tt.SORT_CREATED_DATE_DESC)
+		return tl
 	}
 }
 
-func toggleTask(m TaskListView) tea.Cmd {
+func (m *TaskListView) toggleTask() tea.Cmd {
 	return func() tea.Msg {
 		li := m.CurrentItem()
 		tv, ok := li.(TaskView)
@@ -56,27 +64,36 @@ func toggleTask(m TaskListView) tea.Cmd {
 			task.Complete()
 		}
 		m.tasks.WriteToFilename("todo.txt")
-		return loadTasks()
+		return m.loadTasks()
 	}
 }
 
-func addTask(m TaskListView, value string) tea.Cmd {
+func (m *TaskListView) addTask(value string) tea.Cmd {
 	return func() tea.Msg {
 		task, err := tt.ParseTask(value)
 		if err != nil {
-			log.Fatal(err)
+			return nil
 		}
 		m.tasks.AddTask(task)
 		m.tasks.WriteToFilename("todo.txt")
-		return loadTasks()
+		return m.loadTasks()
+	}
+}
+
+func (m TaskListView) filterTasks(query string) tea.Cmd {
+	return func() tea.Msg {
+		filtered := filterByString(m.tasks, query)
+		return filtered
 	}
 }
 
 func (m TaskListView) Init() tea.Cmd {
-	return loadTasks
+	return m.loadTasks
 }
 
-func (m TaskListView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *TaskListView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
 
 	case tt.TaskList:
@@ -86,22 +103,32 @@ func (m TaskListView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			tv := NewTaskView(t)
 			m.AddItem(tv)
 		}
-		return m, nil
+		return m, boba.ChangeState("tasks")
 
 	case tea.KeyMsg:
+		if m.showFilter {
+			m.filter, cmd = m.filter.Update(msg)
+			return m, cmd
+		}
+
 		switch msg.String() {
+
+		// search tasks for query
+		case "/":
+			m.showFilter = true
+			return m, nil
 
 		// add task, send state message
 		case "a":
-            return m, cmdChangeState(stateInput)
+			return m, boba.ChangeState("input")
 
 		// sort tasks
 		case "s":
-			return m, sortTasks(m.tasks)
+			return m, m.sortTasks()
 
 		// toggle completed
 		case "x":
-			return m, toggleTask(m)
+			return m, m.toggleTask()
 		}
 		_, cmd := m.List.Update(msg)
 		return m, cmd
@@ -110,9 +137,13 @@ func (m TaskListView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m TaskListView) View() string {
+
 	// The header
 	s := "task list:\n\n"
 
 	s += m.List.View()
+	if m.showFilter {
+		s += m.filter.View()
+	}
 	return s
 }

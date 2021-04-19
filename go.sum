@@ -30,6 +30,8 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/rivo/uniseg v0.1.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.2.0 h1:S1pD9weZBuJdFmowNwbpi7BJ8TNftyUImj/0WQi72jY=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
+github.com/treethought/boba v0.0.0-20210419015258-d1b1088a64f4 h1:A2euL98a0LioaXQe63TzyTAYTSY4LyPqb0z2713O2cI=
+github.com/treethought/boba v0.0.0-20210419015258-d1b1088a64f4/go.mod h1:xAHS1+CFeWpDwP1i+DeO5C3JRDBd2JqVriIw9WUc1mQ=
 github.com/treethought/todotxt v0.0.0-20210417185518-be743e90e590 h1:3UkDwsyvVhl6AJS8VWlfCFkd/bHwgmRODAwn9O8WObA=
 github.com/treethought/todotxt v0.0.0-20210417185518-be743e90e590/go.mod h1:mT7pNZP6LSPN+jl8ab9UzRoV8T4r+n0X0Vo6tkOLyLg=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
