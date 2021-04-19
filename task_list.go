@@ -18,13 +18,16 @@ type TaskListView struct {
 
 func NewTaskListView() *TaskListView {
 	m := &TaskListView{
-		List:    boba.NewList(),
 		tasks:   tt.NewTaskList(),
 		taskMap: make(map[int]int),
 	}
 
 	filter := boba.NewInput(m.filterTasks)
 	m.filter = filter
+
+	list := boba.NewList()
+	list.SetSelectedFunc(m.viewTask)
+    m.List = list
 
 	return m
 }
@@ -68,6 +71,17 @@ func (m *TaskListView) toggleTask() tea.Cmd {
 	}
 }
 
+func (m *TaskListView) viewTask(msg tea.Msg) tea.Cmd {
+	return func() tea.Msg {
+		task, ok := msg.(TaskView)
+		if !ok {
+			log.Fatal("failed to view task")
+		}
+		return MessageViewTask{task.Task}
+
+	}
+}
+
 func (m *TaskListView) addTask(value string) tea.Cmd {
 	return func() tea.Msg {
 		task, err := tt.ParseTask(value)
@@ -81,7 +95,7 @@ func (m *TaskListView) addTask(value string) tea.Cmd {
 }
 
 func (m *TaskListView) filterTasks(query string) tea.Cmd {
-    m.showFilter = false
+	m.showFilter = false
 	return func() tea.Msg {
 		filtered := filterByString(m.tasks, query)
 		return filtered
@@ -104,7 +118,7 @@ func (m *TaskListView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			tv := NewTaskView(t)
 			m.AddItem(tv)
 		}
-        m.filter.Blur()
+		m.filter.Blur()
 		return m, boba.ChangeState("tasks")
 
 	case tea.KeyMsg:

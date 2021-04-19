@@ -25,7 +25,6 @@ type TaskView struct {
 
 func NewTaskView(task tt.Task) TaskView {
 	return TaskView{task}
-
 }
 
 func (t TaskView) styledView() string {
