@@ -43,12 +43,13 @@ func NewTaskListView() *TaskListView {
 		taskMap: make(map[int]int),
 	}
 
-	filter := boba.NewInput(m.filterTasks)
+	filter := boba.NewInput()
+	filter.SetSubmitHandler(m.filterTasks)
 	m.filter = filter
 
 	list := boba.NewList()
 	list.SetSelectedFunc(m.viewTask)
-    m.List = list
+	m.List = list
 
 	return m
 }

@@ -19,7 +19,8 @@ func NewApp() *App {
 
 	app := &App{Boba: bapp}
 
-	app.input = boba.NewInput(cmdSaveTask)
+	app.input = boba.NewInput()
+    app.input.SetSubmitHandler(cmdSaveTask)
 	app.tasks = NewTaskListView()
 	app.detail = NewTaskDetail()
 
@@ -28,7 +29,7 @@ func NewApp() *App {
 	app.Boba.Add("detail", app.detail)
 
 	app.Boba.SetFocus("tasks")
-	app.Boba.SetDelgate(app.delegate)
+	app.Boba.SetDelegate(app.delegate)
 
 	return app
 }
