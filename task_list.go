@@ -1,12 +1,33 @@
 package tudu
 
 import (
+	"fmt"
 	"log"
+	"os"
+	"path/filepath"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/treethought/boba"
 	tt "github.com/treethought/todotxt"
 )
+
+var TODOFILE = ""
+
+func init() {
+	_, err := os.Stat("todo.txt")
+	if err == nil {
+		fmt.Println("using local todo.txt")
+		TODOFILE = "todo.txt"
+        return
+	}
+    home, err := os.UserHomeDir()
+    if err != nil {
+        log.Fatal("failed to find todo.txt")
+    }
+    TODOFILE = filepath.Join(home, "todo/todo.txt")
+
+}
 
 type TaskListView struct {
 	*boba.List
@@ -35,7 +56,7 @@ func NewTaskListView() *TaskListView {
 func (m TaskListView) loadTasks() tea.Msg {
 	tt.IgnoreComments = false
 
-	tasklist, err := tt.LoadFromFilename("todo.txt")
+	tasklist, err := tt.LoadFromFilename(TODOFILE)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,7 +87,26 @@ func (m *TaskListView) toggleTask() tea.Cmd {
 		} else {
 			task.Complete()
 		}
-		m.tasks.WriteToFilename("todo.txt")
+		m.tasks.WriteToFilename(TODOFILE)
+		return m.loadTasks()
+	}
+}
+
+func (m *TaskListView) deleteTask() tea.Cmd {
+	return func() tea.Msg {
+		li := m.CurrentItem()
+		tv, ok := li.(TaskView)
+		if !ok {
+			log.Fatal("not a task")
+		}
+
+		err := m.tasks.RemoveTaskById(tv.Id)
+		if err != nil {
+			log.Println("Failed to remove task")
+			return nil
+		}
+
+		m.tasks.WriteToFilename(TODOFILE)
 		return m.loadTasks()
 	}
 }
@@ -89,7 +129,7 @@ func (m *TaskListView) addTask(value string) tea.Cmd {
 			return nil
 		}
 		m.tasks.AddTask(task)
-		m.tasks.WriteToFilename("todo.txt")
+		m.tasks.WriteToFilename(TODOFILE)
 		return m.loadTasks()
 	}
 }
@@ -145,6 +185,10 @@ func (m *TaskListView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// toggle completed
 		case "x":
 			return m, m.toggleTask()
+
+		// delete task
+		case "d":
+			return m, m.deleteTask()
 		}
 		_, cmd := m.List.Update(msg)
 		return m, cmd
