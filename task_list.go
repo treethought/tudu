@@ -128,6 +128,10 @@ func (m *TaskListView) addTask(value string) tea.Cmd {
 		if err != nil {
 			return nil
 		}
+		if !task.HasCompletedDate() {
+			task.CreatedDate = time.Now()
+		}
+
 		m.tasks.AddTask(task)
 		m.tasks.WriteToFilename(TODOFILE)
 		return m.loadTasks()
